@@ -5,12 +5,13 @@ from django.http import response
 from django.shortcuts import render
 import rest_framework
 from rest_framework.serializers import Serializer
-
-
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from tickets.models import Guest
 from . import views
 from django.http.response import Http404, JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework import status,filters
@@ -144,10 +145,13 @@ class mixin_pk(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyM
 class generic_list(generics.ListCreateAPIView):
     queryset=Guest.objects.all()
     serializer_class=GuestSerializer
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
 class generic_pk(generics.RetrieveUpdateDestroyAPIView):
     queryset=Guest.objects.all()
     serializer_class=GuestSerializer
-
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
  
 class viewsets_guest(viewsets.ModelViewSet):
     queryset=Guest.objects.all()
@@ -185,3 +189,8 @@ def new_reversation(request):
     reversation.save()
     serializer=ReversationSerializer(reversation)
     return Response(serializer.data)
+
+class Post_pk(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes=[IsAuthorOrReadOnly]
+    queryset=Post.objects.all()
+    serializer_class=PosetSerializer

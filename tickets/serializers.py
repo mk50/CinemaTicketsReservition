@@ -17,5 +17,10 @@ class GuestSerializer(serializers.ModelSerializer):
         model=Guest
         fields=['pk','reversation','name','mobile']
 
+class PosetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Post
+        fields='__all__'
+
 
 

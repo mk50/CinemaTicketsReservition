@@ -19,6 +19,7 @@ from django.urls.conf import include
 
 from tickets import views
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 router=DefaultRouter()
 router.register('guest',views.viewsets_guest)
 router.register('movie',views.viewsets_movie)
@@ -49,5 +50,9 @@ urlpatterns = [
     path('rest/viewset/',include(router.urls)),
     #find movie make search
     path('fbv/findmovie',views.find_movie),
-    path('fbv/newreversation',views.new_reversation)
+    path('fbv/newreversation',views.new_reversation),
+    path('api_auth',include('rest_framework.urls')),
+    #Token authentication
+    path('api_auth_token',obtain_auth_token),
+    path('post/generics/<int:pk>',views.Post_pk.as_view())
 ]
